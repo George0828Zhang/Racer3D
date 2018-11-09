@@ -1,0 +1,85 @@
+<html>
+
+<head>
+<title>WebGL &mdash; Shaders</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="webgl-utils.js"></script>
+
+<script id="FragmentShader" type="fragment">
+	precision mediump float;    
+
+	uniform vec3 LightRay;
+
+	uniform float Ka;
+	uniform float Kd;
+	uniform float Ks;
+	uniform float n;
+
+	varying vec4 worldPos;
+
+	varying vec3 interpN;
+	varying vec3 fragColor;	
+
+	void main(void) {
+		vec3 V = normalize(vec3(0) - worldPos.xyz);
+	    vec3 N = normalize(interpN);
+
+	    const float Ia = 1.0;
+	    const float Ip = 5.0;
+
+		// ambients
+		vec3 I_amb = vec3(Ia * Ka);
+
+    	vec3 L = normalize(-LightRay);
+		vec3 H = normalize(L+V);
+
+		// diffuse
+		float I_diff = clamp(Kd * Ip * dot(N,L), 0.0, Ip);
+
+		// specular	    
+		float COS = clamp(dot(N, H), 0.0, 1.0);
+		float I_spec = Ks * Ip * pow(COS, n);   	
+
+        gl_FragColor = vec4((I_diff+I_amb+I_spec) * fragColor.rgb, 1.0);
+	}
+</script>
+
+<script id="VertexShader" type="vertex">
+	attribute vec3 aVertexPosition;
+	attribute vec3 aVertexNormal;
+	attribute vec3 aFrontColor;
+
+	uniform mat4 uMVMatrix;
+	uniform mat4 uPMatrix;
+	uniform mat4 invMatrix;
+
+	varying vec4 worldPos;
+
+	varying vec3 interpN;
+	varying vec3 fragColor;
+
+	void main(void) {
+		worldPos = uMVMatrix * vec4(aVertexPosition, 1.0);
+	    gl_Position = uPMatrix * worldPos;
+
+		interpN = normalize((vec4(aVertexNormal, 1.0) * invMatrix).xyz);
+	    fragColor = aFrontColor.rgb;
+	}
+</script>
+
+<script type="text/javascript" src="animation.js"></script>
+
+</head>
+
+
+<body onload="webGLStart();">
+  
+    <canvas id="ICG-canvas" style="border: none;" width="800" height="600"></canvas>
+    <div id = "output">
+  		<a>Speed:</a><a id="speed">0</a>
+ 	</div>
+</body>
+
+</html>
