@@ -14,8 +14,6 @@ function animate() {
         var elapsed = timeNow - lastTime;
         // speed decay:
         speed = Math.max(speed - Math.floor(elapsed/50), 0);
-
-        
     }
     lastTime = timeNow;
 }
