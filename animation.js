@@ -12,8 +12,7 @@ function animate() {
     var timeNow = new Date().getTime();
     if (lastTime != 0) {
         var elapsed = timeNow - lastTime;
-        // speed decay:
-        speed = Math.max(speed - Math.floor(elapsed/50), 0);
+        // speed = Math.max(speed - Math.floor(elapsed/50), 0);
     }
     lastTime = timeNow;
 }
@@ -25,15 +24,19 @@ function OnKeyDown(event){
 	switch(key){
 		case 37:
 		all_trans[car_name][0] = Math.max(all_trans[car_name][0] - 0.1*speed/50, maxlshift);
+		// if left is pressed, shift the car to the left
 		break;
 		case 38:
-		speed = Math.min(speed+2, maxspeed);		
+		speed = Math.min(speed+2, maxspeed);
+		// if up is pressed, increase the speed
 		break;
 		case 39:
 		all_trans[car_name][0] = Math.min(all_trans[car_name][0] + 0.1*speed/50, maxrshift);
+		// if right is pressed, shift the car to the right
 		break;
 		case 40:
 		speed = Math.max(speed-5, 0);
+		// if down is pressed, reduce the speed
 		break;
 		default:
 		// do nothing
@@ -51,8 +54,8 @@ function tick() {
 
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+///////////////////////////////////We don't need to worry about the codes below/////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
 var gl;
 function initGL(canvas) {
