@@ -1,5 +1,5 @@
 // attributes
-const car_name = "Car_road";
+const car_name = "Car";
 const maxspeed = 200;
 const maxlshift = -1.7;
 const maxrshift = 0.3;
@@ -12,7 +12,15 @@ function animate() {
     var timeNow = new Date().getTime();
     if (lastTime != 0) {
         var elapsed = timeNow - lastTime;
-        // speed = Math.max(speed - Math.floor(elapsed/50), 0);
+
+        // moving the road line's z coordinate        
+        if (all_trans['road_line'][2] > 0){
+        	all_trans['road_line'][2] = all_default['road_line']['translation'][2];//
+        }
+        else{
+        	all_trans['road_line'][2] = all_trans['road_line'][2] + 0.0001*elapsed*speed
+        }
+        // TODO: moving of plants/flags on side of road?
     }
     lastTime = timeNow;
 }
@@ -46,11 +54,63 @@ function OnKeyDown(event){
 	HUD_speed.innerHTML = speed;
 }
 
+// this function runs periodically
 function tick() {
     requestAnimFrame(tick);
     drawScene();
     animate();
 }
+
+
+// Here is an example of how to setup a model's default attributes
+const all_default = {
+	"Car":{
+		"translation":[-0.7, -0.5, -3],
+		"scale":[1.0, 1.0, 1.0],
+		"rotation":[90, 180, 90],
+	},
+	"road_line":{
+		"translation":[-0.04, -0.78, -9],
+		"scale":[0.07, 1.0, 2.0],
+		"rotation":[90, 180, 90],
+	},
+	"road_body":{
+		"translation":[-0.04, -0.8, -6],
+		"scale":[1.5, 1.0, 6.0],
+		"rotation":[90, 180, 90],
+	}
+}
+
+// this function runs only once when the page load up
+function webGLStart() {
+    var canvas = document.getElementById("ICG-canvas");
+    initGL(canvas);
+    initShaders();
+
+    // set the direction of sunlight
+    SetLightDir([0., -1., 2.]);
+
+    //load models into the program
+    loadModel("Models/Car.json");
+    loadModel("Models/road_body.json");
+    loadModel("Models/road_line.json");
+
+    // some other initializations
+    gl.clearColor(0.0, 0.2, 0.2, 1.0);
+    gl.enable(gl.DEPTH_TEST);
+  	document.addEventListener('keydown', OnKeyDown);
+    reset();
+    tick();
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -239,24 +299,18 @@ function loadModel(model) {
             var sub = model.split(/[.\/]/);
             var name = sub[sub.length-2];
             all_name[loaded++] = name;
-            all_reflect_params[name] = [0.3, 0.5, 0.5, 80.0];            
-            all_trans[name] = all_default["Car_road"];
-            all_scale[name] = [1.0, 1.0, 1.0];
-            all_rot[name] = [90, 180, 90];
+            all_reflect_params[name] = [0.1, 0.1, 0.0, 1.0];
+            all_trans[name] = all_default[name]["translation"].slice();
+	        all_scale[name] = all_default[name]["scale"].slice();
+	        all_rot[name] = all_default[name]["rotation"].slice();
 
-            // if(sub[sub.length-2]=="Easter"){
-            //     all_reflect_params[loaded-1] = [0.2, 0.5, 0.2, 64.0];
-            // }else if(sub[sub.length-2]=="Car_road"){
-            //     all_reflect_params[loaded-1] = [0.3, 0.2, 0.8, 50.0];
-            // }else{
-            //     all_reflect_params[loaded-1] = [0.2, 0.3, 0.7, 50.0];
-            // }
+	        if(name==car_name){
+	        	all_reflect_params[name] = [0.3, 0.5, 0.5, 80.0];
+	        }
         }
     }
     request.send();   
 }
-
-var all_default = {"Car_road":[-0.7, -0.5, -3],}
 var all_name = [];
 var all_reflect_params = {};
 var all_trans = {};
@@ -321,29 +375,4 @@ function drawScene() {
 
         PopMatrices();
     }
-}
-
-// function tick() {
-//     requestAnimFrame(tick);
-//     drawScene();
-//     animate();
-// }
-
-
-function webGLStart() {
-    var canvas = document.getElementById("ICG-canvas");
-    initGL(canvas);
-    initShaders();
-    SetLightDir([0., -1., 2.]);
-    loadModel("Models/Car_road.json"); 
-
-    gl.clearColor(0.0, 0.2, 0.2, 1.0);
-    gl.enable(gl.DEPTH_TEST);
-
-   //  output = document.getElementById("output");
-  	// document.onkeydown = updateKeys;
-  	document.addEventListener('keydown', OnKeyDown);
-
-    reset();
-    tick();
 }
