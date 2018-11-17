@@ -12,6 +12,8 @@ A model is composed of several triangles, each of which is represented by 3 vert
 	"vertexBackcolors" : [0,255,0,0,255,0,0,255,0,0,255,0,0,255,0,0,255,0]
 }
 ```
+In detail, the rectangle is formed by two triangles `(-1.0,-1.0,0.0),(1.0,-1.0,0.0),(1.0,1.0,0.0)` and `(1.0,1.0,0.0),(-1.0,1.0,0.0),(-1.0,-1.0,0.0)`. It is important that the number of vertex is a multiple of 3, else there will be problems showing the model.
+
 Notice that each vertex has 4 attributes, which are `Position`, `Normal`, `Frontcolor` and `Backcolor`.
 - Position: The vertex's position reletive to center of the model.
 - Normal: The vector representing the vertex's facing. For the sake of simplicity, let's assume all three normals of a triangle are the same. For example, [0.0,0.0,1.0] points directly at the camera.
@@ -71,7 +73,7 @@ all_trans['Car'][0] = 0 // This is x
 all_trans['Car'][1] = 0 // y
 all_trans['Car'][2] = -5 // z
 ```
-**note** that when setting an entire vector (list), it is not the values that are copied but the reference to the vector. This might cause some problems such as the example below.
+**Note** that when setting an entire vector (list), it is not the values that are copied but the reference to the vector. This might cause some problems such as the example below.
 ```javascript
 all_trans['Car'] = all_default['Car']['translation']
 all_trans['Car'][2] = 99
