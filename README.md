@@ -1,7 +1,7 @@
 # Racer3D
 ## How to add a model
 ##### Step 1 : create JSON file
-A model is comprises several triangles, each of which is represented by 3 vertices. The following is the content of `road_line.json` representing a yellow rectangle sitting on xy plane facing positive z direction, where the camera is sitting. 
+A model is composed of several triangles, each of which is represented by 3 vertices. The following is the content of `road_line.json` representing a yellow rectangle sitting on xy plane facing positive z direction, where the camera is sitting. 
 ```json
 {
 	"vertexPositions" : [-1.0,-1.0,0.0,1.0,-1.0,0.0,1.0,1.0,0.0,1.0,1.0,0.0,-1.0,1.0,0.0,-1.0,-1.0,0.0],
