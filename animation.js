@@ -78,7 +78,7 @@ const all_default = {
 		"translation":[-0.04, -0.8, -6],
 		"scale":[1.5, 1.0, 6.0],
 		"rotation":[90, 180, 90],
-	}
+	},
 }
 
 // this function runs only once when the page load up
@@ -321,9 +321,9 @@ var all_rot = {};
 function reset(){
     spinAngle = 180;
     for (var name in all_name){  	
-        all_trans[name] = [0, 0, -5];
-        all_scale[name] = [1.0, 1.0, 1.0];
-        all_rot[name] = [90, 180, 90];
+		all_trans[name] = all_default[name]["translation"].slice();
+		all_scale[name] = all_default[name]["scale"].slice();
+		all_rot[name] = all_default[name]["rotation"].slice();
     }
 }
 
