@@ -55,6 +55,19 @@ loadModel("Models/road_line.json");
 ```
 And that's it! The model will now show up in the scene. Next we will explore how to move an object in the scene.
 ## How to move an object
+##### wrapper function(s)
+Wrapper functions are implemented for easier control of objects.
+```javascript
+function move(name, axis, amount, lbound, ubound, wrapback)
+```
+- `name`: name of the object to move.
+- `axis`: which axis to move along. Accepted values are `0, 1, 2` or `'x', 'y', 'z'`.
+- `amount`: amount to move.
+- `lbound`: the lower bound for the resulting value. 
+- `ubound`: the upper bound for the resulting value. 
+- `wrapback`: whether to warp obejct back to default location after reaching `lbound/ubound`. Accepts `true/false`.
+
+##### more general transformations
 The structure of the program allows change of object location (translation), rotation and scale at any given time/frame. The information is stored in the following javascript dictionary in `animation.js`.
 ```javascript
 var all_trans = {};
