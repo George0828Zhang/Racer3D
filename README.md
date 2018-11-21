@@ -51,7 +51,7 @@ Here are a few tips about the scene.
 ##### Step 3 : load the model
 Finally we load the model into the scene. To do this we need the location of the `.json` file we just created. For this example the file is at `Models/road_line.json`. We then add the following code to the function `webGLStart()`, inside `animation.js`.
 ```javascript
-loadModel("Models/road_line.json");
+loadModel("Models/road_line.json", "road_line");
 ```
 And that's it! The model will now show up in the scene. Next we will explore how to move an object in the scene.
 ## How to move an object
