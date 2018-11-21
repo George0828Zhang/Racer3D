@@ -1,5 +1,4 @@
 // attributes
-const car_name = "Car";
 const maxspeed = 200;
 const maxlshift = -1.7;
 const maxrshift = 0.3;
@@ -13,14 +12,10 @@ function animate() {
     if (lastTime != 0) {
         var elapsed = timeNow - lastTime;
 
-        // moving the road line's z coordinate        
-        if (all_trans['road_line'][2] > 0){
-        	all_trans['road_line'][2] = all_default['road_line']['translation'][2];//
-        }
-        else{
-        	all_trans['road_line'][2] = all_trans['road_line'][2] + 0.0001*elapsed*speed
-        }
-        // TODO: moving of plants/flags on side of road?
+        // moving the road line's z coordinate    
+        move("road_line", "z", 0.0001*elapsed*speed, -20, 0, true);
+        move("plant1", "z", 0.0001*elapsed*speed, -20, 0, true);
+        move("plant2", "z", 0.0001*elapsed*speed, -20, 0, true);
     }
     lastTime = timeNow;
 }
@@ -31,15 +26,15 @@ function OnKeyDown(event){
 	// K_LEFT = 37; K_RIGHT = 39; K_UP = 38;K_DOWN = 40;
 	switch(key){
 		case 37:
-		all_trans[car_name][0] = Math.max(all_trans[car_name][0] - 0.1*speed/50, maxlshift);
+		move("Car", "x", -0.1*speed/50, maxlshift, maxrshift, false);
 		// if left is pressed, shift the car to the left
 		break;
 		case 38:
 		speed = Math.min(speed+2, maxspeed);
 		// if up is pressed, increase the speed
 		break;
-		case 39:
-		all_trans[car_name][0] = Math.min(all_trans[car_name][0] + 0.1*speed/50, maxrshift);
+		case 39:		
+		move("Car", "x", 0.1*speed/50, maxlshift, maxrshift, false);
 		// if right is pressed, shift the car to the right
 		break;
 		case 40:
@@ -79,6 +74,16 @@ const all_default = {
 		"scale":[1.5, 1.0, 6.0],
 		"rotation":[90, 180, 90],
 	},
+	"plant1":{
+		"translation":[-1.7, -0.7, -9],
+		"scale":[0.5, 0.5, 0.5],
+		"rotation":[90, 180, 90],
+	},
+	"plant2":{
+		"translation":[1.1, -0.7, -9],
+		"scale":[0.5, 0.5, 0.5],
+		"rotation":[90, 180, 90],
+	},
 }
 
 // this function runs only once when the page load up
@@ -91,9 +96,12 @@ function webGLStart() {
     SetLightDir([0., -1., 2.]);
 
     //load models into the program
-    loadModel("Models/Car.json");
-    loadModel("Models/road_body.json");
-    loadModel("Models/road_line.json");
+    loadModel("Models/Car.json", "Car");
+    loadModel("Models/road_body.json", "road_body");
+    loadModel("Models/road_line.json", "road_line");
+    loadModel("Models/Plant.json", "plant1");
+    loadModel("Models/Plant.json", "plant2");
+
 
     // some other initializations
     gl.clearColor(0.0, 0.2, 0.2, 1.0);
@@ -116,6 +124,18 @@ function webGLStart() {
 
 ///////////////////////////////////We don't need to worry about the codes below/////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+
+// utility functions
+function move(name, axis, amount, lbound, ubound, wrapback){
+	axis = {0:0, 1:1, 2:2, "x":0, "y":1, "z":2}[axis]
+	
+    var updt = all_trans[name][axis] + amount
+    all_trans[name][axis] = Math.max(lbound, Math.min(updt, ubound));
+    if(wrapback &&  (all_trans[name][axis] == ubound || all_trans[name][axis] == lbound)){
+		all_trans[name][axis] = all_default[name]['translation'][axis];
+	}
+}
+
 
 var gl;
 function initGL(canvas) {
@@ -289,23 +309,23 @@ function handleLoadedModel(desData) {
 }
 
 var loaded = 0;
-function loadModel(model) {    
+function loadModel(model, name) {    
     var request = new XMLHttpRequest();
     request.open("GET", model);
     request.onreadystatechange = function () {
         if (request.readyState == 4) {
             handleLoadedModel(JSON.parse(request.responseText));
             
-            var sub = model.split(/[.\/]/);
-            var name = sub[sub.length-2];
+            // var sub = model.split(/[.\/]/);
+            // var name = sub[sub.length-2];
             all_name[loaded++] = name;
-            all_reflect_params[name] = [0.1, 0.1, 0.0, 1.0];
+            all_reflect_params[name] = [0.3, 0.5, 0.5, 80.0];
             all_trans[name] = all_default[name]["translation"].slice();
 	        all_scale[name] = all_default[name]["scale"].slice();
 	        all_rot[name] = all_default[name]["rotation"].slice();
 
-	        if(name==car_name){
-	        	all_reflect_params[name] = [0.3, 0.5, 0.5, 80.0];
+	        if(name=="road_body"){
+	        	all_reflect_params[name] = [0.1, 0.1, 0.0, 1.0];
 	        }
         }
     }
