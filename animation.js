@@ -2,6 +2,7 @@
 const maxspeed = 200;
 const maxlshift = -1.7;
 const maxrshift = 0.3;
+const skyRGBA = [0, 153, 153, 255];
 
 
 var speed = 0;
@@ -84,10 +85,16 @@ const all_default = {
 		"scale":[0.5, 0.5, 0.5],
 		"rotation":[90, 180, 90],
 	},
+	"sun":{
+		"translation":[-3.5, 3.0, -9],
+		"scale":[0.25, 0.25, 1.0],
+		"rotation":[0, 0, 0],
+	},
 }
 
 // this function runs only once when the page load up
 function webGLStart() {
+	// circle(50, 2.5);
     var canvas = document.getElementById("ICG-canvas");
     initGL(canvas);
     initShaders();
@@ -101,10 +108,12 @@ function webGLStart() {
     loadModel("Models/road_line.json", "road_line");
     loadModel("Models/Plant.json", "plant1");
     loadModel("Models/Plant.json", "plant2");
+    loadModel("Models/Sun.json", "sun");
 
 
     // some other initializations
-    gl.clearColor(0.0, 0.2, 0.2, 1.0);
+    // gl.clearColor(0.0, 0.2, 0.2, 1.0);
+    gl.clearColor(...skyRGBA.map(function(e){return e/255;}));
     gl.enable(gl.DEPTH_TEST);
   	document.addEventListener('keydown', OnKeyDown);
     reset();
@@ -395,4 +404,41 @@ function drawScene() {
 
         PopMatrices();
     }
+}
+
+function circle(tri, r){
+	var points = [];
+	var normals = [];
+	var frontc = [];
+	var backc = [];
+	// var points = [];
+	var center = [0, 0, -5]; 
+
+	for (var i = 0; i <= tri; i++){
+		points.push(...center);
+		points.push(r*Math.cos(2*Math.PI*i/tri));
+	    points.push(r*Math.sin(2*Math.PI*i/tri));
+	    points.push(-5.0);
+	    points.push(r*Math.cos(2*Math.PI*(i+1)/tri));
+	    points.push(r*Math.sin(2*Math.PI*(i+1)/tri));	        
+	    points.push(-5.0);
+
+	    normals.push(0.0, 0.0, 1.0);
+	    normals.push(0.0, 0.0, 1.0);
+	    normals.push(0.0, 0.0, 1.0);
+
+	    frontc.push(255, 255, 0);
+	    frontc.push(255, 255, 0);
+	    frontc.push(255, 255, 0);
+
+	    backc.push(255, 255, 0);
+	    backc.push(255, 255, 0);
+	    backc.push(255, 255, 0);
+
+	}
+
+	console.log(points);
+	console.log(normals);
+	console.log(frontc);
+	console.log(backc);
 }
