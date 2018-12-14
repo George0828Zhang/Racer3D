@@ -1,11 +1,13 @@
 // attributes
 const maxspeed = 200;
+const track_length = 10000;
 const maxlshift = -1.7;
 const maxrshift = 0.3;
-const skyRGBA = [0, 153, 153, 255];
+const skyRGBA = [0, 153, 203, 255];
 
 
 var speed = 0;
+var traveled = 0;
 
 var lastTime = 0;
 function animate() {
@@ -13,10 +15,22 @@ function animate() {
     if (lastTime != 0) {
         var elapsed = timeNow - lastTime;
 
-        // moving the road line's z coordinate    
-        move("road_line", "z", 0.0001*elapsed*speed, -20, 0, true);
-        move("plant1", "z", 0.0001*elapsed*speed, -20, 0, true);
-        move("plant2", "z", 0.0001*elapsed*speed, -20, 0, true);
+        // moving the road line's z coordinate
+        var dS = 0.0001*elapsed*speed;
+        traveled += dS;
+        move("road_line", "z", dS, -20, 0, true);
+        move("plant1", "z", dS, -20, 0, true);
+        move("plant2", "z", dS, -20, 0, true);
+
+        // process finish line
+        if(traveled > track_length){
+        	// todo: game winner
+        }
+
+
+
+		var HUD_dist = document.getElementById("dist");	
+		HUD_dist.innerHTML = Math.floor(traveled*10);
     }
     lastTime = timeNow;
 }
